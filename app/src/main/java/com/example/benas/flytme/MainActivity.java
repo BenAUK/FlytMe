@@ -1,7 +1,10 @@
 package com.example.benas.flytme;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +15,7 @@ import android.widget.EditText;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -27,6 +31,7 @@ public class MainActivity extends AppCompatActivity{
     String flightNumber;
     Button submitButton;
     String result;
+    List<FlightDetail> flightDetailList = new ArrayList<FlightDetail>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,8 @@ public class MainActivity extends AppCompatActivity{
                             result = scrapeData.execute(flightNumber).get();
                             //Process Data Extraction
                             List<String> flightData = ExtractFlightDetails(result);
+                            //Cast to FlightDetail object
+                            flightDetailList = CreateFlightDetailObjectList(flightData, flightDetailList);
 
 
 
@@ -63,11 +70,47 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
+    private List<FlightDetail> CreateFlightDetailObjectList(List<String> rawData, List<FlightDetail> flightDetailList) {
+
+        List<String> formattedList = new ArrayList<String>();
+        for (int i = 0; i < rawData.size(); i++) {
+            String[] flightDetailPart = rawData.get(i).split(" ");
+            FlightDetail singleFlight = new FlightDetail();
+            for(int j = 0; j < flightDetailPart.length; j++) {
+                Pattern pattern = Pattern.compile("\"([A-Za-z0-9+:?/-]+)\"?");
+                Matcher matcher = pattern.matcher(flightDetailPart[j]);
+                while (matcher.find()) {
+                    formattedList.add(matcher.group(1));
+                }
+            }
+
+            singleFlight.arrivalDelay = formattedList.get(0);
+            singleFlight.arrivalDate = formattedList.get(1);
+            singleFlight.departureDelay = formattedList.get(2);
+            singleFlight.departureDate = formattedList.get(3);
+            singleFlight.flightNumber = formattedList.get(4);
+            singleFlight.hasArrived = formattedList.get(5);
+            singleFlight.hasDeparted = formattedList.get(6);
+            singleFlight.scheduleOnly = formattedList.get(7);
+            singleFlight.route = formattedList.get(8);
+            singleFlight.status = formattedList.get(9);
+            singleFlight.terminals = formattedList.get(10);
+
+            //RESET LIST
+            formattedList.clear();
+
+            this.flightDetailList.add(singleFlight);
+        }
+
+        return this.flightDetailList;
+    }
+
     public class ScrapeData extends AsyncTask<String, Void, String> {
         public static final String REQUEST_METHOD = "GET";
         public static final int READ_TIMEOUT = 15000;
         public static final int CONNECTION_TIMEOUT = 15000;
         private String resp;
+        Context context;
 
         @Override
         protected String doInBackground(String... params) {
@@ -116,6 +159,12 @@ public class MainActivity extends AppCompatActivity{
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
+            Intent newIntent = new Intent();
+            newIntent.setClass(getApplicationContext(),FlightResults.class);
+            newIntent.putExtra("flightDetailList", (Serializable) flightDetailList);
+            startActivity(newIntent);
+            overridePendingTransition  (R.anim.right_slide_in, R.anim.right_slide_out);
+
         }
 
 

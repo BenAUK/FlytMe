@@ -27,7 +27,9 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="85dp"
+        android:gravity="center"
         tools:layout_editor_absoluteY="208dp" />
+
 
     <Button
         android:id="@+id/button"
