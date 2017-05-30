@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity{
         Matcher m = Pattern.compile("(?:data-arrival_delay=)\"([0-9-+]*)\" (?:data-arrival_time=)\"([A-Z0-9-:+]+)\" " +
                 "(?:data-departure_delay=)\"([0-9-+]*)\" (?:data-departure_time=)\"([A-Z0-9-:+]+)\" " +
                 "(?:data-flight_number=)\"([A-Z0-9]+)\" (?:data-has_arrived=)\"([A-Za-z]+)\" (?:data-has_departed=)\"([A-Za-z]+)\" " +
-                "(?:data-is_schedule_only=)\"([A-Za-z]+)\" (?:data-route=)\"([A-Za-z-]+)\" (?:data-status=)\"([A-Za-z]+)\" " +
+                "(?:data-is_schedule_only=)\"([A-Za-z]+)\" (?:data-route=)\"([A-Za-z-]+)\" (?:data-status=)\"([A-Za-z_]+)\" " +
                 "(?:data-terminals=)\"([A-Z-\\/?\\s0-9]+)\"")
                 .matcher(rawData);
         while (m.find()) {
