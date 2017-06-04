@@ -1,13 +1,10 @@
 package com.example.benas.flytme;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -160,7 +157,7 @@ public class MainActivity extends AppCompatActivity{
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             Intent newIntent = new Intent();
-            newIntent.setClass(getApplicationContext(),FlightResults.class);
+            newIntent.setClass(getApplicationContext(),FlightResultsActivity.class);
             newIntent.putExtra("flightDetailList", (Serializable) flightDetailList);
             startActivity(newIntent);
             overridePendingTransition  (R.anim.right_slide_in, R.anim.right_slide_out);
